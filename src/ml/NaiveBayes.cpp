@@ -1,7 +1,7 @@
 //
 // Created by rawan ali on 10/27/25.
 //
-#include "NaiveBayes.h"
+#include "ml/NaiveBayes.h"
 #include <vector>
 #include <set>
 #include <sstream>
