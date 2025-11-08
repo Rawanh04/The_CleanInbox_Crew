@@ -82,3 +82,43 @@ bool CsvReader::next(unordered_map<string,string>& row){
         }
     }
 }
+
+//pls review this function!!!
+//helper function to read the file
+void readFile(string filename, vector<string>& labels, vector<string>& emails) {
+    //opening the file and preparing variables
+    ifstream file(filename);
+    string line;
+    string label = "";
+    string email = "";
+
+    //reading file
+    while (getline(file, line)) {
+        //variables to read the possible label (the csv file is fomatted weirdly)
+        stringstream ss(line);
+        string possibleLabel;
+        getline(ss, possibleLabel, ',');
+
+        //if the label is found, it'll push back the previous email
+        //and update with the new email values (label and the beginning of
+        //the next email)
+        if (possibleLabel == "Spam" || possibleLabel == "Ham") {
+            if (!label.empty()) {
+                labels.push_back(label);
+                emails.push_back(email);
+                email.clear();
+            }
+            label = possibleLabel;
+            email = line.substr(label.size()+1);
+        } else {
+            //if no label is found, it'll keep reading the file
+            email += " " + line;
+        }
+    }
+    //in case the file ends, we want to save the last value
+    if (!label.empty()) {
+        labels.push_back(label);
+        emails.push_back(email);
+    }
+    file.close();
+}
