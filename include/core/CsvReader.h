@@ -9,6 +9,7 @@
 #include <vector>
 #include <unordered_map>
 #include <fstream>
+#include <sstream>
 
 using namespace std;
 
@@ -31,5 +32,8 @@ private:
   static vector<string> parseCsvLine(const string& line);
   static string trim(const string& s);
 };
+
+void readFile(string filename, vector<string>& labels, vector<string>& emails);
+
 
 #endif // CSVREADER_H
