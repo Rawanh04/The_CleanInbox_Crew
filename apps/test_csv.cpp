@@ -7,7 +7,7 @@
 //
 
 int main() {
-    CsvReader rdr("./data/raw/spam_Emails_data.csv");
+    CsvReader rdr("../data/raw/spam_Emails_data.csv");
     if (!rdr.readHeader()) {
         std::cerr << "Failed to read CSV header\n";
         return 1;

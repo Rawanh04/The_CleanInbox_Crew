@@ -15,10 +15,10 @@ target_include_directories(The_CleanInbox_Crew PUBLIC
         ${CMAKE_CURRENT_SOURCE_DIR}/include
 )
 
-# add_executable(test_csv
-#     apps/test_csv.cpp
-#     src/core/CsvReader.cpp
-# )
+ add_executable(test_csv
+     apps/test_csv.cpp
+     src/core/CsvReader.cpp
+ )
 # target_include_directories(test_csv PUBLIC
 #     ${CMAKE_CURRENT_SOURCE_DIR}/include
 # )
