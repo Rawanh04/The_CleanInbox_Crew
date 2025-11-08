@@ -7,6 +7,9 @@ WORKDIR /app
 # Copy all project files into the container
 COPY . .
 
+# Copy frontend files (HTML, CSS, JS)
+COPY frontend /app/frontend
+
 # Install CMake and any extra libraries
 RUN apt-get update && apt-get install -y cmake libssl-dev
 
