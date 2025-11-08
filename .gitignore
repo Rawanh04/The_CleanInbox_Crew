@@ -1,0 +1,3 @@
+cmake-build-debug/
+.DS_Store
+data/raw/spam_Emails_data.csv
