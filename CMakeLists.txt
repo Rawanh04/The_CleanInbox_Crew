@@ -9,7 +9,6 @@ add_executable(The_CleanInbox_Crew
         src/ml/NaiveBayes.cpp
         src/core/CsvReader.cpp
         src/ml/Rocchio.cpp
-        # src/ml/Rocchio.cpp
 )
 
 target_include_directories(The_CleanInbox_Crew PUBLIC
