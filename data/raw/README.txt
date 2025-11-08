@@ -5,3 +5,4 @@ Download it from:
 https://www.kaggle.com/datasets/meruvulikith/190k-spam-ham-email-dataset-for-classification
 
 After downloading, place it in:  data/raw/spam_Emails_data.csv
+and watch the magic happen :)
