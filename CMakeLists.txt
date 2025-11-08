@@ -21,6 +21,7 @@ target_include_directories(The_CleanInbox_Crew PUBLIC
      src/core/CsvReader.cpp
          include/ml/Rocchio.h
          apps/test_rocchio.cpp
+         include/core/httplib.h
  )
 
 add_executable(test_rocchio

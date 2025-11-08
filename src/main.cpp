@@ -2,8 +2,11 @@
 #include <sstream>
 #include <vector>
 #include <iostream>
+
 #include "core/CsvReader.h"
 #include "ml/NaiveBayes.h"
+#include "ml/Rocchio.h"
+#include "httplib.h"
 using namespace std;
 
 int main() {
