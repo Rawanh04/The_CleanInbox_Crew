@@ -18,7 +18,7 @@ class NaivesBayes {
     set<string> categories;
     set<string> fillerWords = {"and", "but", "or", "so",
         "because", "for", "it", "the", "is", "to",
-    "of", "in", "a", ":", ",", "."};
+    "of", "in", "a", ":", ",", ".", "\""};
 
 
 public:

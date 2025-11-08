@@ -1,11 +1,11 @@
 //
 // Created by rawan ali on 10/27/25.
 //
-#include "../../NaiveBayes.h"
+#include "ml/NaiveBayes.h"
 #include <vector>
 #include <set>
 #include <sstream>
-#include <cmath>
+#include <iostream>
 
 using namespace std;
 
@@ -19,6 +19,13 @@ void tokenize(const string& s, vector<string>& tokens, set<string>& fillerWords)
         for (char& c : token) {
             c = tolower(c);
         }
+        //removing punctuation
+        size_t start = 0, end = token.size() - 1;
+        while (start < token.size() && !isalpha(token[start])) {start++;}
+        while (end > start && !isalpha(token[end])) {end--;}
+        if (start > end) {continue;}
+        token = token.substr(start, end - start + 1);
+
         //removing punctuation on words
         token.erase(remove_if(token.begin(), token.end(),
             [](char c){return !isalpha(c);}),token.end());
@@ -34,15 +41,19 @@ void tokenize(const string& s, vector<string>& tokens, set<string>& fillerWords)
 void NaivesBayes::fit(const vector<string>& x_train, const vector<string>& y_train) {
     int n_sample = x_train.size();
 
-    //going over the 2 categories, ham and spam, making sure there's only 2
-    for (const auto& label : y_train) {
-        categories.insert(label);
-    }
+    //adding the 2 categories, ham and spam
+    categories.insert("ham");
+    categories.insert("spam");
+    totalWords["ham"] = 0;
+    totalWords["spam"] = 0;
 
     //for loop that adds the words of the emails into a data structure
     //here it would be two unordered_map
     for (int i = 0; i < n_sample; i++) {
         string label = y_train[i];
+        for (char& c : label) {
+            c = tolower(c);
+        }
         vector<string> words;
         tokenize(x_train[i], words, fillerWords);
 
@@ -57,7 +68,11 @@ void NaivesBayes::fit(const vector<string>& x_train, const vector<string>& y_tra
     for (const auto& label : categories) {
         double count = 0.0;
         for (const auto& y : y_train) {
-            if (y == label) {
+            string l = y;
+            for (char& c : l) {
+                c = tolower(c);
+            }
+            if (l == label) {
                 count++;
             }
         }
