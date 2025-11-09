@@ -1,29 +1,41 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
+    <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>📥Clean Inbox📥</title>
     <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-    <header>
-        <h1>📥Clean Inbox📥</h1>
-    </header>
-    <main>
-        <section class="input-section">
-            <h2>Import Email</h2>
+<header>
+    <h1>📥 Clean Inbox 📥</h1>
+</header>
 
-            <div class="file-upload">
-                <input type="file" id="fileInput" accept=".txt" />
-                <label for="fileInput">Open file / Drop file here</label>
-            </div>
+<main>
+    <section class="input-section">
+        <h2>Scan or Load Testing Data</h2>
 
-            <div class="paste-section">
+        <!-- Drop Zone -->
+        <div class="file-upload" id="dropZone">
+            <input type="file" id="fileInput" accept=".txt" hidden />
+            <label for="fileInput" id="fileLabel">📂 Open file / Drop file here</label>
+        </div>
 
-            </div>
+        <!-- Paste Text Area -->
+        <div class="paste-section">
+            <textarea id="emailText" placeholder="Paste email text here..."></textarea>
+            <button id="scanBtn">Scan</button>
+        </div>
 
-        </section>
-    </main>
+        <hr />
+
+        <!-- Load Testing Data Button -->
+        <div class="load-section">
+            <button id="loadTestBtn">Load Testing Data</button>
+        </div>
+    </section>
+</main>
+
+<script src="script.js"></script>
 </body>
 </html>

@@ -21,4 +21,5 @@ RUN cmake --build build
 EXPOSE 8080
 
 # Run the compiled program
-CMD ["sh", "-c", "./build/The_CleanInbox_Crew $PORT"]
+CMD ["./build/The_CleanInbox_Crew"]
+

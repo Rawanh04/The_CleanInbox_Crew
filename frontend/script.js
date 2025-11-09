@@ -35,7 +35,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 localStorage.setItem("scanResults", JSON.stringify(data));
 
                 // redirects user to the results page
-                window.location.href = "result.html";
+                window.location.href = "results.html";
             } catch (error) {
                 console.error("Scan request failed:" ,error);
                 alert("Error!! Couldn't connect to backend!!")
@@ -95,5 +95,61 @@ document.addEventListener("DOMContentLoaded", () => {
         document.getElementById("emailBody").textContent = emailData.text || "";
         document.getElementById("emailExplanation").textContent = emailData.explanation || "";
     }
+
+    // --- Drag & Drop .txt upload functionality ---
+    const dropZone = document.getElementById("dropZone");
+    const fileInput = document.getElementById("fileInput");
+    const fileLabel = document.getElementById("fileLabel");
+    const emailText = document.getElementById("emailText");
+
+    if (dropZone && emailText && fileInput) {
+        // highlight drop zone on drag
+        ["dragenter", "dragover"].forEach(eventName => {
+            dropZone.addEventListener(eventName, e => {
+                e.preventDefault();
+                dropZone.classList.add("dragover");
+                fileLabel.textContent = "📂 Drop your .txt file here!";
+            });
+        });
+
+        // remove highlight when leaving
+        ["dragleave", "drop"].forEach(eventName => {
+            dropZone.addEventListener(eventName, e => {
+                e.preventDefault();
+                dropZone.classList.remove("dragover");
+                fileLabel.textContent = "📂 Open file / Drop file here";
+            });
+        });
+
+        // handle drop
+        dropZone.addEventListener("drop", e => {
+            const file = e.dataTransfer.files[0];
+            if (!file || !file.name.endsWith(".txt")) {
+                alert("Please drop a valid .txt file!");
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = evt => {
+                emailText.value = evt.target.result;
+            };
+            reader.readAsText(file);
+        });
+
+        // handle normal file input
+        fileInput.addEventListener("change", e => {
+            const file = e.target.files[0];
+            if (file && file.name.endsWith(".txt")) {
+                const reader = new FileReader();
+                reader.onload = evt => {
+                    emailText.value = evt.target.result;
+                };
+                reader.readAsText(file);
+            } else {
+                alert("Please select a valid .txt file!");
+            }
+        });
+    }
+
 })
 

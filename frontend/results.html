@@ -1,34 +1,39 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>📥Clean Inbox📥 - Results</title>
     <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-    <header>
-        <h1>📥Clean Inbox📥</h1>
-    </header>
+<header>
+    <h1>📥 Clean Inbox 📥</h1>
+</header>
 
-    <main>
-        <h2>Model Comparison Results</h2>
+<main>
+    <h2>Model Comparison Results</h2>
 
-        <div class="results-container">
-            <div class="result-box">
-                <h3>MNB Results</h3>
-                <p id="mnb_results"></p>
-            </div>
-
-            <div class="result-box">
-                <h3>Rocchio Classifier Results</h3>
-                <p id="rocchio_classifier_results"></p>
-            </div>
+    <div class="results-container">
+        <div class="result-box">
+            <h3>MNB Results</h3>
+            <p id="naiveBayesResult"></p>
         </div>
 
+        <div class="result-box">
+            <h3>Rocchio Classifier Results</h3>
+            <p id="rocchioResult"></p>
+        </div>
+    </div>
 
+    <div class="explanation-box">
+        <h3>Explanation / Comparison</h3>
+        <p id="explanation"></p>
+    </div>
 
-    </main>
+    <button id="exportBtn">Export Results</button>
+</main>
 
+<script src="script.js"></script>
 </body>
 </html>
