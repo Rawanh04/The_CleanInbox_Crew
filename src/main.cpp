@@ -40,7 +40,7 @@ int main() {
     vector<string> emails;
 
     //reading files
-    string filename = "data/raw/spam_Emails_data.csv";
+    string filename = "C:/Users/17546/CLionProjects/The_CleanInbox_Crew/data/raw/spam_Emails_data.csv"; //replace with the exact path location
     ifstream file(filename);
     if (!file.is_open()) {
         cout <<"help" << endl;
@@ -105,9 +105,57 @@ int main() {
         }
     });
 
-    svr.Get("/test", [](const httplib::Request&, httplib::Response& res) {
-        res.set_content("Server is working!", "text/plain");
-    });
+    svr.Get("/test", [&](const httplib::Request&, httplib::Response& res) {
+    try {
+        if (emails.empty() || labels.empty()) {
+            res.status = 500;
+            res.set_content("{\"error\": \"Dataset not loaded!\"}", "application/json");
+            return;
+        }
+
+        // create array of test samples
+        std::ostringstream json;
+        json << "{ \"samples\": [";
+
+        // test up to 5 examples from dataset
+        int numSamples = std::min(5, (int)emails.size());
+        srand((unsigned)time(nullptr));
+
+        for (int i = 0; i < numSamples; ++i) {
+            int idx = rand() % emails.size();
+
+            std::string emailText = emails[idx];
+            std::string trueLabel = labels[idx];
+
+            std::string nb_pred = predictionsNaive.predict(emailText);
+            std::string roc_pred = roc.predict(emailText);
+
+            std::ostringstream explanation;
+            explanation << "True label: " << trueLabel
+                        << ". Naive Bayes says: " << nb_pred
+                        << ". Rocchio says: " << roc_pred << ".";
+
+            json << "{"
+                 << "\"nb\": \"" << nb_pred << "\", "
+                 << "\"rocchio\": \"" << roc_pred << "\", "
+                 << "\"label\": \"" << trueLabel << "\", "
+                 << "\"explanation\": \"" << explanation.str() << "\""
+                 << "}";
+
+            if (i < numSamples - 1) json << ",";
+        }
+
+        json << "] }";
+        res.set_content(json.str(), "application/json");
+    } catch (const std::exception& e) {
+        std::cerr << "Error in /test: " << e.what() << std::endl;
+        res.status = 500;
+        res.set_content("{\"error\": \"Exception during test endpoint.\"}", "application/json");
+    }
+});
+
+
+
 
     cout << "server running at http://localhost:5000/" << endl;
     svr.listen("0.0.0.0", 5000);

@@ -67,9 +67,46 @@ document.addEventListener("DOMContentLoaded", () => {
         const results = JSON.parse(localStorage.getItem("scanResults") || "{}");
 
         //fill in result values
-        document.getElementById("naiveBayesResult").textContent = results.nb || "N/A";
-        document.getElementById("rocchioResult").textContent = results.rocchio || "N/A";
-        document.getElementById("explanation").textContent = results.explanation || "No explanation provided.";
+        if (window.location.pathname.endsWith("results.html")) {
+            const results = JSON.parse(localStorage.getItem("scanResults") || "{}");
+            const container = document.querySelector(".results-container");
+            container.innerHTML = "";
+
+            // Case 1: /test endpoint (multiple samples)
+            if (results.samples && Array.isArray(results.samples) && results.samples.length > 0) {
+                results.samples.forEach((sample, i) => {
+                    const div = document.createElement("div");
+                    div.classList.add("result-box");
+                    div.innerHTML = `
+                <h3>Sample ${i + 1}</h3>
+                <p><strong>True label:</strong> ${sample.label}</p>
+                <p><strong>Naive Bayes:</strong> ${sample.nb}</p>
+                <p><strong>Rocchio:</strong> ${sample.rocchio}</p>
+                <p>${sample.explanation}</p>
+            `;
+                    container.appendChild(div);
+                });
+            }
+
+            // Case 2: /scan endpoint (single prediction)
+            else if (results.nb || results.rocchio) {
+                const div = document.createElement("div");
+                div.classList.add("result-box");
+                div.innerHTML = `
+            <h3>Scan Results</h3>
+            <p><strong>Naive Bayes:</strong> ${results.nb || "N/A"}</p>
+            <p><strong>Rocchio:</strong> ${results.rocchio || "N/A"}</p>
+            <p>${results.explanation || "No explanation provided."}</p>
+        `;
+                container.appendChild(div);
+            }
+
+            // Fallback case
+            else {
+                container.innerHTML = "<p>No results found!</p>";
+            }
+        }
+
 
         // enable "export results" button
         if (exportBtn) {
@@ -96,60 +133,80 @@ document.addEventListener("DOMContentLoaded", () => {
         document.getElementById("emailExplanation").textContent = emailData.explanation || "";
     }
 
-    // --- Drag & Drop .txt upload functionality ---
-    const dropZone = document.getElementById("dropZone");
+    // file upload handler
     const fileInput = document.getElementById("fileInput");
-    const fileLabel = document.getElementById("fileLabel");
+    const dropZone = document.getElementById("dropZone");
     const emailText = document.getElementById("emailText");
+    const fileLabel = document.getElementById("fileLabel");
 
-    if (dropZone && emailText && fileInput) {
-        // highlight drop zone on drag
-        ["dragenter", "dragover"].forEach(eventName => {
-            dropZone.addEventListener(eventName, e => {
-                e.preventDefault();
-                dropZone.classList.add("dragover");
-                fileLabel.textContent = "📂 Drop your .txt file here!";
-            });
-        });
+    if (fileInput && emailText) {
 
-        // remove highlight when leaving
-        ["dragleave", "drop"].forEach(eventName => {
-            dropZone.addEventListener(eventName, e => {
-                e.preventDefault();
-                dropZone.classList.remove("dragover");
-                fileLabel.textContent = "📂 Open file / Drop file here";
-            });
-        });
-
-        // handle drop
-        dropZone.addEventListener("drop", e => {
-            const file = e.dataTransfer.files[0];
+        const handleFile = async (file) => {
             if (!file || !file.name.endsWith(".txt")) {
-                alert("Please drop a valid .txt file!");
+                alert("Please upload a valid .txt file!");
                 return;
             }
 
             const reader = new FileReader();
-            reader.onload = evt => {
-                emailText.value = evt.target.result;
+            reader.onload = async (e) => {
+                const text = e.target.result.trim();
+                if (!text) {
+                    alert("File is empty!");
+                    return;
+                }
+
+                emailText.value = text; // fill textarea
+
+                try {
+                    // send POST request to /scan
+                    const response = await fetch("/scan", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ text }),
+                    });
+
+                    const data = await response.json();
+                    localStorage.setItem("scanResults", JSON.stringify(data));
+                    window.location.href = "results.html";
+
+                } catch (err) {
+                    console.error("Scan request failed:", err);
+                    alert("Error connecting to backend!");
+                }
             };
             reader.readAsText(file);
+        };
+
+        // handle input file selection
+        fileInput.addEventListener("change", e => {
+            handleFile(e.target.files[0]);
         });
 
-        // handle normal file input
-        fileInput.addEventListener("change", e => {
-            const file = e.target.files[0];
-            if (file && file.name.endsWith(".txt")) {
-                const reader = new FileReader();
-                reader.onload = evt => {
-                    emailText.value = evt.target.result;
-                };
-                reader.readAsText(file);
-            } else {
-                alert("Please select a valid .txt file!");
-            }
-        });
+        // handle drag & drop
+        if (dropZone && fileLabel) {
+            ["dragenter", "dragover"].forEach(eventName => {
+                dropZone.addEventListener(eventName, e => {
+                    e.preventDefault();
+                    dropZone.classList.add("dragover");
+                    fileLabel.textContent = "📂 Drop your .txt file here!";
+                });
+            });
+
+            ["dragleave", "drop"].forEach(eventName => {
+                dropZone.addEventListener(eventName, e => {
+                    e.preventDefault();
+                    dropZone.classList.remove("dragover");
+                    fileLabel.textContent = "📂 Open file / Drop file here";
+                });
+            });
+
+            dropZone.addEventListener("drop", e => {
+                const file = e.dataTransfer.files[0];
+                handleFile(file);
+            });
+        }
     }
+
 
 })
 
